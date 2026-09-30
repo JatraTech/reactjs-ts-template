@@ -1,0 +1,64 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production-${{ github.repository }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy React App
+    runs-on: ubuntu-latest
+    environment: Production
+    timeout-minutes: 15
+
+    env:
+      # 🔧 CHANGE THESE PER PROJECT
+      BUILD_DIR: dist
+
+    steps:
+      - name: Deploy React app to server
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            echo "🚀 [1/5] Setting up environment..."
+            export PATH="$HOME/.bun/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+
+            if ! command -v bun &> /dev/null; then
+              echo "⚠️ Bun not found on server. Installing Bun..."
+              curl -fsSL https://bun.sh/install | bash
+              export PATH="$HOME/.bun/bin:$PATH"
+            fi
+
+            echo "📌 Using Bun version: $(bun --version)"
+
+            echo "📂 [2/5] Updating source code..."
+            cd ${{ secrets.REMOTE_PATH }}
+            git fetch origin main --prune
+            git reset --hard origin/main
+
+            echo "🔒 [3/5] Checking lockfile & installing dependencies..."
+            bun install --frozen-lockfile
+
+            echo "🏗️ [4/5] Building project..."
+            NODE_OPTIONS="--max-old-space-size=4096" bun run build
+
+            echo "📂 [5/5] Deploying build folder..."
+            sudo mkdir -p ${{ secrets.REMOTE_PUBLIC_PATH }}
+            sudo rsync -av --delete ${{ env.BUILD_DIR }}/ ${{ secrets.REMOTE_PUBLIC_PATH }}/
+
+            echo "✅ Deployment successful"
