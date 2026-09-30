@@ -2,9 +2,9 @@
 
 Production-oriented **Vite + React 19** marketing site starter: FSD-lite folders, RTK Query for CMS APIs, three-tier SEO (static HTML + runtime meta + Puppeteer prerender), and Backstage preview support.
 
-**Backend counterpart:** [`../django_template`](../django_template) (Django + Backstage admin).
+**Backend counterpart:** [`../django-template`](../django-template) (Django + Backstage admin).
 
-**Conventions:** [`../docs/frontend-marketing-spa.md`](../docs/frontend-marketing-spa.md) and [`../docs/frontend-fsd-lite.md`](../docs/frontend-fsd-lite.md).
+**Conventions:** [`../../docs/frontend-marketing-spa.md`](../../docs/frontend-marketing-spa.md) and [`../../docs/frontend-fsd-lite.md`](../../docs/frontend-fsd-lite.md).
 
 ## Features
 
@@ -17,7 +17,7 @@ Production-oriented **Vite + React 19** marketing site starter: FSD-lite folders
 ## Quick start
 
 ```bash
-cd frontend-marketing-template
+cd react-marketing-template
 bun install
 cp .env.example .env
 bun run dev
