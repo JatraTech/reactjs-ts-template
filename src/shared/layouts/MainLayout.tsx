@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, ScrollRestoration, useLocation, useNavigationType } from "react-router-dom";
 
+import HubSpotTracker from "@/widgets/hubspot-tracker/HubSpotTracker";
 import { SiteFooter } from "@/widgets/site-footer/SiteFooter";
 import { SiteHeader } from "@/widgets/site-header/SiteHeader";
 import { isPreviewMode } from "@/shared/lib/preview";
@@ -27,10 +28,11 @@ export function MainLayout() {
       <ScrollRestoration />
       {!previewMode && <SiteJsonLd />}
       {previewMode && <SeoHead title="Preview" robots="noindex, nofollow" />}
-      <div className="flex min-h-dvh flex-col bg-page-bg">
+      <div className="flex min-h-dvh flex-col overflow-x-clip bg-page-bg">
+        {!previewMode && <HubSpotTracker />}
         <PreviewBanner />
         <SiteHeader />
-        <main className="flex-1">
+        <main id="main" className="flex-1">
           <Outlet />
         </main>
         <SiteFooter />

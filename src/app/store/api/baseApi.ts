@@ -44,7 +44,7 @@ const baseQueryWithPreview: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQu
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithPreview,
-  tagTypes: ["Homepage", "SiteSettings", "Contact"],
+  tagTypes: ["Homepage", "About", "SiteSettings", "Contact"],
   endpoints: () => ({}),
 });
 

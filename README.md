@@ -8,10 +8,12 @@ Production-oriented **Vite + React 19** marketing site starter: FSD-lite folders
 
 ## Features
 
-- React Router 7 data router, Redux Toolkit Query-only store
-- `PageSeo` / `SeoHead`, sitemap + `robots.txt` on build, optional prerender
+- React Router 7 data router (lazy route chunks), Redux Toolkit Query-only store
+- `brand.config.ts` for name, SEO defaults, env fallbacks, OG assets
+- `LazyImage` / `LazySection`, `PageSeo` / `SeoHead`, sitemap + `robots.txt` on build, optional prerender
 - Preview mode (`?preview=`) with `X-Preview-Token` on API requests
-- Sample `features/website` (homepage) and `features/contact` (form POST)
+- FSD-lite slices: `homepage`, `about`, `site-settings`, `contact` + composable `widgets/`
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — how to add pages/features (King-aligned rules)
 - Bun scripts: `dev`, `build`, `build:spa`, `typecheck`, `lint`, `test`
 
 ## Quick start
@@ -33,13 +35,15 @@ Replace `myproject` / `My Project` / example URLs throughout the repo:
 |-------------|----------------|
 | `package.json` | `name`, `description` |
 | `.env` | `VITE_API_BASE_URL`, `VITE_SITE_URL` |
-| `src/shared/config/constants.ts` | Brand name, nav links, social URLs |
-| `src/shared/lib/seo/defaults.ts` | Default description, JSON-LD contact |
+| `src/shared/config/brand.config.ts` | Brand name, tagline, description, contact, OG colors |
+| `src/shared/config/constants.ts` | Nav links (re-exports brand fields) |
+| `scripts/generate-og-image.mjs` | `BRAND` object (keep in sync with `brand.config.ts`) |
 | `src/index.css` `@theme` | Brand colors |
 | `scripts/routes.mjs` | `STATIC_ROUTES` (+ optional dynamic fetch) |
 | `.github/workflows/deploy-production.yml` | GitHub **Production** secrets (`REMOTE_*`) |
 | `.github/workflows/deploy-staging.yml` | GitHub **Staging** secrets (`STAGING_REMOTE_*`) |
 | `src/features/*/api/*` | API paths to match your Django `urls.py` |
+| `docs/ARCHITECTURE.md` | Layer boundaries when adding routes/features |
 
 **Tip:** Search for `myproject`, `My Project`, and `example.com` (case-insensitive).
 
@@ -50,6 +54,7 @@ Replace `myproject` / `My Project` / example URLs throughout the repo:
 | `bun run dev` | Vite dev server |
 | `bun run build` | Sitemap → `tsc` → Vite → Puppeteer prerender |
 | `bun run build:spa` | Sitemap + build **without** prerender (faster) |
+| `bun run generate-og` | `public/og-default.webp` from brand + logo assets |
 | `bun run typecheck` | `tsc -b` |
 | `bun run lint` / `format` | ESLint / Prettier |
 | `bun run test` | Vitest smoke tests |
@@ -67,6 +72,7 @@ Before merging, run: `typecheck`, `lint`, `test`, `build:spa`.
 See [`docs/optional/`](docs/optional/):
 
 - React Compiler
+- [Lazy routes & LazyImage](docs/optional/performance-lazy-routes.md)
 - HubSpot tracker from site settings
 - Dynamic sitemap routes (blog slugs)
 - Split `tailwind-theme.css` for large token sets

@@ -1,17 +1,21 @@
-const API_BASE_FALLBACK = "http://localhost:8000/api/v1";
-const SITE_URL_FALLBACK = "https://www.example.com";
+import { brand } from "@/shared/config/brand.config";
+
+function requireEnv(name: "VITE_API_BASE_URL" | "VITE_SITE_URL", fallback: string): string {
+  const value = import.meta.env[name]?.trim();
+  if (value) return value;
+
+  if (import.meta.env.PROD) {
+    console.error(
+      `[env] ${name} is not set. Using brand default "${fallback}". Set it in CI / host env for production.`,
+    );
+  } else if (import.meta.env.DEV) {
+    console.info(`[env] ${name} unset — using local brand default "${fallback}".`);
+  }
+
+  return fallback;
+}
 
 export const env = {
-  apiBase: import.meta.env.VITE_API_BASE_URL ?? API_BASE_FALLBACK,
-  siteUrl: (import.meta.env.VITE_SITE_URL ?? SITE_URL_FALLBACK).replace(/\/$/, ""),
+  apiBase: requireEnv("VITE_API_BASE_URL", brand.defaults.apiBase).replace(/\/$/, ""),
+  siteUrl: requireEnv("VITE_SITE_URL", brand.defaults.siteUrl).replace(/\/$/, ""),
 };
-
-if (!import.meta.env.VITE_API_BASE_URL && import.meta.env.PROD) {
-  console.warn(
-    `VITE_API_BASE_URL is not set in environment variables. Using fallback "${API_BASE_FALLBACK}".`,
-  );
-}
-
-if (!import.meta.env.VITE_SITE_URL && import.meta.env.PROD) {
-  console.warn(`VITE_SITE_URL is not set. Using fallback "${SITE_URL_FALLBACK}".`);
-}

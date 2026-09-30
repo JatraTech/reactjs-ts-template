@@ -1,27 +1,56 @@
-import { PageSeo } from "@/shared/lib/seo/PageSeo";
+import { useGetAboutQuery } from "@/features/about/api/aboutApi";
 import { APP_FULL_NAME, APP_TAGLINE } from "@/shared/config/constants";
+import { PageSeo } from "@/shared/lib/seo/PageSeo";
+import MarketingSection from "@/widgets/marketing-section/MarketingSection";
+import PageHero from "@/widgets/page-hero/PageHero";
 
 export default function AboutPage() {
+  const { data, isLoading, isError } = useGetAboutQuery();
+
+  const fallbackTitle = `About — ${APP_FULL_NAME}`;
+  const fallbackDescription = `Learn more about ${APP_FULL_NAME}. ${APP_TAGLINE}`;
+
   return (
     <>
       <PageSeo
+        cms={data?.seo}
         canonicalPath="/about"
         fallbackTitle="About"
         fallbacks={{
-          title: `About — ${APP_FULL_NAME}`,
-          description: `Learn more about ${APP_FULL_NAME}. ${APP_TAGLINE}`,
+          title: data?.hero_title ?? fallbackTitle,
+          description: data?.hero_subhead ?? fallbackDescription,
+          image: data?.hero_image,
         }}
+        isLoading={isLoading}
         allowWithoutData
       />
 
-      <div className="mx-auto max-w-3xl px-6 py-16">
-        <h1 className="text-3xl font-bold text-brand-navy">About</h1>
-        <p className="mt-4 text-brand-navy/80">
-          Replace this page with CMS-driven content (e.g. <code>GET /website/about/</code>) or keep
-          it static. The routing and <code>PageSeo</code> pattern are the important parts of the
-          template.
-        </p>
-      </div>
+      {data ? (
+        <>
+          <PageHero
+            eyebrow={data.hero_eyebrow}
+            title={data.hero_title}
+            description={data.hero_subhead}
+            imageSrc={data.hero_image}
+            imageAlt={data.hero_image_alt}
+            priorityImage={false}
+          />
+          {(data.body_heading || data.body_html) && (
+            <MarketingSection heading={data.body_heading} html={data.body_html} />
+          )}
+        </>
+      ) : (
+        !isLoading && (
+          <MarketingSection
+            heading="About"
+            html={
+              isError
+                ? `<p>Could not load <code>/website/about/</code>. Wire the About page in Django or keep static copy here.</p>`
+                : `<p>Replace this with CMS-driven content from <code>GET /website/about/</code>.</p><p>${fallbackDescription}</p>`
+            }
+          />
+        )
+      )}
     </>
   );
 }

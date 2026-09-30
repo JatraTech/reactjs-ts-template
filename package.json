@@ -11,6 +11,7 @@
     "postbuild": "node scripts/prerender.mjs",
     "build:spa": "node scripts/generate-sitemap.mjs && tsc -b && vite build",
     "generate-sitemap": "node scripts/generate-sitemap.mjs",
+    "generate-og": "node scripts/generate-og-image.mjs",
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "format": "prettier --write .",

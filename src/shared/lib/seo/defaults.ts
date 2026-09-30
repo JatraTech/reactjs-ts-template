@@ -1,3 +1,4 @@
+import { brand } from "@/shared/config/brand.config";
 import { APP_EMAIL, APP_FULL_NAME, APP_TAGLINE, SOCIAL_LINKS } from "@/shared/config/constants";
 import { env } from "@/shared/lib/env";
 
@@ -8,10 +9,9 @@ export const SITE_URL = env.siteUrl;
 
 export const BASE_TITLE = `${SITE_NAME} | ${SITE_TAGLINE}`;
 
-export const DEFAULT_DESCRIPTION =
-  "My Project — replace this default description in shared/lib/seo/defaults.ts and via CMS SEO fields.";
+export const DEFAULT_DESCRIPTION = brand.description;
 
-export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.webp`;
+export const DEFAULT_OG_IMAGE = `${SITE_URL}${brand.assets.ogDefault}`;
 
 export const ORGANIZATION_JSON_LD = {
   "@context": "https://schema.org",
