@@ -17,7 +17,7 @@ Production-oriented **Vite + React 19** marketing site starter: FSD-lite folders
 ## Quick start
 
 ```bash
-cd marketing-spa-template
+cd frontend-marketing-template
 bun install
 cp .env.example .env
 bun run dev
@@ -37,7 +37,8 @@ Replace `myproject` / `My Project` / example URLs throughout the repo:
 | `src/shared/lib/seo/defaults.ts` | Default description, JSON-LD contact |
 | `src/index.css` `@theme` | Brand colors |
 | `scripts/routes.mjs` | `STATIC_ROUTES` (+ optional dynamic fetch) |
-| `.github/workflows/deploy-production.yml` | GitHub environment secrets (`REMOTE_*`) |
+| `.github/workflows/deploy-production.yml` | GitHub **Production** secrets (`REMOTE_*`) |
+| `.github/workflows/deploy-staging.yml` | GitHub **Staging** secrets (`STAGING_REMOTE_*`) |
 | `src/features/*/api/*` | API paths to match your Django `urls.py` |
 
 **Tip:** Search for `myproject`, `My Project`, and `example.com` (case-insensitive).
@@ -72,4 +73,33 @@ See [`docs/optional/`](docs/optional/):
 
 ## Deploy
 
-Push to `main` runs `.github/workflows/deploy-production.yml` (SSH, `bun run build`, `rsync dist/`). Configure repository secrets for your server paths.
+| Branch | Workflow | GitHub environment |
+|--------|----------|----------------------|
+| `main` | [deploy-production.yml](.github/workflows/deploy-production.yml) | **Production** |
+| `staging` | [deploy-staging.yml](.github/workflows/deploy-staging.yml) | **Staging** |
+
+Both workflows SSH to the server, `git pull` the matching branch, `bun install --frozen-lockfile`, `bun run build` (sitemap + prerender), then `rsync dist/` to the public web path.
+
+### GitHub secrets
+
+**Production** (`main`):
+
+| Secret | Purpose |
+|--------|---------|
+| `REMOTE_HOST` | SSH host |
+| `REMOTE_USER` | SSH user |
+| `REMOTE_SSH_KEY` | Private key |
+| `REMOTE_PATH` | Git checkout on server (e.g. `/var/www/myproject-frontend`) |
+| `REMOTE_PUBLIC_PATH` | Static files served by nginx (e.g. `/var/www/myproject/public`) |
+
+**Staging** (`staging`):
+
+| Secret | Purpose |
+|--------|---------|
+| `STAGING_REMOTE_HOST` | SSH host |
+| `STAGING_REMOTE_USER` | SSH user |
+| `STAGING_REMOTE_SSH_KEY` | Private key |
+| `STAGING_REMOTE_PATH` | Git checkout on staging server |
+| `STAGING_REMOTE_PUBLIC_PATH` | Staging static web root |
+
+On the server, set `.env` (or export `VITE_*` before build) so `VITE_SITE_URL` matches staging vs production before `bun run build`.
