@@ -1,5 +1,7 @@
-import type { ImgHTMLAttributes } from 'react'
+import type { ImgHTMLAttributes } from "react";
 
-export function Img({ loading = 'lazy', decoding = 'async', ...props }: ImgHTMLAttributes<HTMLImageElement>) {
-  return <img loading={loading} decoding={decoding} {...props} />
+import LazyImage, { type LazyImageProps } from "@/shared/ui/LazyImage";
+
+export function Img(props: ImgHTMLAttributes<HTMLImageElement> & Pick<LazyImageProps, "priority" | "srcSet" | "sizes">) {
+  return <LazyImage {...props} />;
 }

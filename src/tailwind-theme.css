@@ -1,0 +1,11 @@
+@theme {
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --color-brand-primary: #2563eb;
+  --color-brand-primary-dark: #1d4ed8;
+  --color-brand-navy: #0f172a;
+  --color-page-bg: #f8fafc;
+
+  --spacing-gutter: 1.5rem;
+  --width-shell: 72rem;
+}
