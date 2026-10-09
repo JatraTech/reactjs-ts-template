@@ -18,7 +18,7 @@ jobs:
     name: Deploy React App
     runs-on: ubuntu-latest
     environment: Staging
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     env:
       # 🔧 CHANGE THESE PER PROJECT
@@ -31,6 +31,7 @@ jobs:
           host: ${{ secrets.STAGING_REMOTE_HOST }}
           username: ${{ secrets.STAGING_REMOTE_USER }}
           key: ${{ secrets.STAGING_REMOTE_SSH_KEY }}
+          command_timeout: 30m
           script_stop: true
           script: |
             set -euo pipefail
@@ -47,7 +48,7 @@ jobs:
             echo "📌 Using Bun version: $(bun --version)"
 
             echo "📂 [2/5] Updating source code..."
-            cd ${{ secrets.STAGING_REMOTE_PATH }}
+            cd "${{ secrets.STAGING_REMOTE_PATH }}"
             git fetch origin staging --prune
             git reset --hard origin/staging
 
@@ -55,7 +56,7 @@ jobs:
             bun install --frozen-lockfile
 
             echo "🏗️ [4/5] Building project..."
-            NODE_OPTIONS="--max-old-space-size=4096" bun run build
+            NODE_OPTIONS="--max-old-space-size=2048" bun run build
 
             echo "📂 [5/5] Deploying build folder..."
             sudo mkdir -p ${{ secrets.STAGING_REMOTE_PUBLIC_PATH }}
